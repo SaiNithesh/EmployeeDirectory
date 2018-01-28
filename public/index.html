@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <title>Employee Directory</title>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/images/favicon.jpg" type="image/x-icon"/>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/custom.css" rel="stylesheet">
+  </head>
+<body ng-app="directoryApp" ng-controller="directoryCtrl as vmApp">
+<div class="container mainCont" >
+  <h2 align="center">Employee Directory App</h2>    
+   <div ng-show="!vmApp.empEdit">
+            <div class="table-responsive">
+			<div>
+                {{vmApp.error}}
+            </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>DOB</th>
+		<th>Department</th>
+		<th>Gender</th>
+		<th>Age</th>
+		<th></th>
+		<th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr >
+	  <form class="margin-base-vertical" method="post">
+        <td width= 50px><input required type="text"  class="input0" id="in_name" placeholder="Name" ng-model="vmApp.emp.Name"  name="name" size="10%"/></td>
+		<td width= 50px><input required type="email" class="input1" id="in_email" placeholder="abc@xyz.com" ng-model="vmApp.emp.Email" name="email" ng-pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"  size="10%"/></td>
+		<td width= 50px><input required type="date" class="input2 input-group date" data-provide="datepicker" id="in_dob" placeholder="yy/mm/dd" ng-model="vmApp.emp.DOB" name="dateofbirth" size="10%"/></td>
+		<td width= 50px><input required type="text" class="input3" id="in_depart" placeholder="Department" ng-model="vmApp.emp.Department" name="department" size="10%"/></td>
+		<td width= 50px><input required type="text" class="input4" id="in_gender" placeholder="Gender" ng-model="vmApp.emp.Gender" name="gender" size="10%"/></td>
+		<td width= 50px><input required type="Number" class="input5" id="in_age" placeholder="Age" ng-model="vmApp.emp.Age" name="age"  disabled /></td>
+		<td width= 50px><Button size="10%" class="btn success" id="addEmpl" type="submit" onclick="addEmploy(this)" ng-click="vmApp.AddEmployee(vmApp.emp)">Add Employee</Button></td>
+		<td width= 50px><Button size="10%" class="btn btn-primary" id="updateEmp" style="display:none;" onclick="update(this)" ng-click="vmApp.UpdateEmployee(vmApp.emp)" type="submit">Update Employee</Button></td>
+	  </tr>  
+	</form>
+		
+		<tr ng-repeat="row in vmApp.empDetails track by row.email">
+		<form class="margin-base-vertical" method="post" action="/updateEmployee">
+			<td width= 50px ><label id="name_{{row.name}}"size="10%">{{row.name}}</td>
+			<td width= 50px ><label id="email_{{row.name}}" size="10%">{{row.email}}</td>
+			<td width= 50px ><label size="10%" id="dob_{{row.name}}" >{{row.dateofbirth | date : "dd.MM.y"}}</td>
+			<td width= 50px ><label size="10%" id="dep_{{row.name}}" >{{row.department}} </td>
+			<td width= 50px ><label size="10%" id="gen_{{row.name}}" >{{row.gender}}</td>
+			<td width= 50px ><label size="10%" id="age_{{row.name}}">{{row.age}}</td>
+			<td width= 50px><input type="button" size="10%" id="delete_{{row.name}}" onclick="addEmploy(this)" class="btn btn-danger" ng-click="vmApp.PopulateData(row);vmApp.deleteEmployee(vmApp.emp);" value="Delete"/></td>
+			<td width= 50px><input type="button" size="10%" id="edit_{{row.name}}" class="btn btn-primary" onclick="edits(this)" id="{{row.name}}" ng-click="vmApp.PopulateData(row)" value="Edit"/></td>
+		                         
+		 </form>	   
+		</tr> 
+	 
+    </tbody>
+  </table>
+  </div>
+  </div>
+ 
+  <!-- <form class="margin-base-vertical" method="get" action="/getEmployees">  
+  <td width= 50px><Button size="10%"  class="btn success" type="submit">Update Employee</button></td>  
+   $(".date").datepicker({
+    onSelect: function(dateText) {
+      display("Selected date: " + dateText + "; input's current value: " + this.value);
+    }
+  }).on("change", function() {
+    display("Got change event from field");
+  });
+
+  function display(msg) {
+    $("<p>").html(msg).appendTo(document.body);
+  }
+  </form>-->
+</div>
+ <script src="/js/jquery.min.js"></script>
+ <script src="/js/bootstrap/js/bootstrap.min.js"></script>
+<script src="/lib/angular.min.js"></script>
+<script src="/lib/angular-messages.min.js"></script>
+<script src="/lib/ui-bootstrap-tpls-2.4.0.min.js"></script>
+<script src="/javascripts/module.js"></script>
+<script src="/javascripts/controller.js"></script>
+<script src="/javascripts/service.js"></script>
+
+  <script>
+  var dob = document.getElementById("in_dob");
+  var age = document.getElementById("in_age");
+  
+ dob.addEventListener("change", function(evt){
+    debugger;
+	
+	var diff_ms = Date.now() - new Date(dob.value).getTime();
+    var age_dt = new Date(diff_ms); 
+	age.value = Math.abs(age_dt.getUTCFullYear() - 1970)
+	console.log(age.value);
+});
+  
+  function update(evt){
+	document.getElementById("updateEmp").style.display = "none";
+	document.getElementById("addEmpl").style.display = "block";	
+	document.getElementById("edit_"+document.getElementById("in_name").value).style.display = "block";
+	
+	$('#in_name').removeAttr('disabled');
+	$('#in_email').removeAttr('disabled');
+	
+	this.addEmploy();
+  }
+  
+  function addEmploy(evt){
+	
+	document.getElementById("in_name").value = "";
+	document.getElementById("in_email").value = "";
+	document.getElementById("in_dob").value = "";	
+	document.getElementById("in_depart").value = "";
+	document.getElementById("in_gender").value = "";
+	document.getElementById("in_age").value = "";	
+  }
+
+function edits(evt) {
+
+	var in_name = document.getElementById("in_name").value;
+	
+	if(in_name.length != 0){
+		document.getElementById("edit_"+in_name).style.display = "block";
+	}
+	var id=evt.id;		
+	var table = document.getElementsByTagName("table")[0]
+	var tbody = table.getElementsByTagName("tbody")[0]
+	var data = []
+	var row = tbody.getElementsByTagName("tr")[1];
+	 var cells = row.getElementsByTagName("td");
+        for (var i = 0; i < cells.length; i++) {
+            data.push(cells[i].innerText);
+        }
+	<!-- var row0 = tbody.getElementsByTagName("tr")[0];	 var cells = row0.getElementsByTagName("td");  for (var j = 0; j < cells.length; j++) {cells[j].innerText = data[j];        } -->
+	var buttonId = document.getElementById(id).style.display = "none";
+	document.getElementById("updateEmp").style.display = "block";
+	document.getElementById("addEmpl").style.display = "none";
+	
+	var name = document.getElementById("name_"+data[0]);
+	var email = document.getElementById("email_"+data[0]);
+	var age = document.getElementById("age_"+data[0]);	
+	var dobId = document.getElementById("dob_"+data[0]);
+	var depId = document.getElementById("dep_"+data[0]);
+	var genId = document.getElementById("gen_"+data[0]);
+	
+	in_name = $(name).html();
+	document.getElementById("in_email").value = $(email).html();
+	document.getElementById("in_dob").value = $(dobId).html();	
+	document.getElementById("in_depart").value = $(depId).html();
+	document.getElementById("in_gender").value = $(genId).html();
+	document.getElementById("in_age").value = $(age).html();	
+	
+	$('#in_name').attr('disabled', 'disabled');
+	$('#in_email').attr('disabled', 'disabled');
+	
+}
+</script>
+
+  <script>
+
+function edit(evt) {
+	var id=evt.id;		
+	var table = document.getElementsByTagName("table")[0]
+	var tbody = table.getElementsByTagName("tbody")[0]
+	var data = []
+	var row = tbody.getElementsByTagName("tr")[1];
+	 var cells = row.getElementsByTagName("td");
+        for (var i = 0; i < cells.length; i++) {
+            data.push(cells[i].innerText);
+        }
+	<!-- var row0 = tbody.getElementsByTagName("tr")[0];	 var cells = row0.getElementsByTagName("td");  for (var j = 0; j < cells.length; j++) {cells[j].innerText = data[j];        } -->
+	var buttonId = document.getElementById(id).style.display = "none";
+	document.getElementById("update_"+id).style.display = "block";
+	
+	
+	var dobName = document.getElementById("dob_"+id);
+	var name = document.getElementById("name_"+id);
+	var emailId = document.getElementById("email_"+id);
+	var dobId = document.getElementById("dob_"+id);
+	var depId = document.getElementById("dep_"+id);
+	var genId = document.getElementById("gen_"+id);
+	
+	var nameHtml = $(name).html(); 
+    var genName = $("<input name='name' ng-model='vmApp.emp.Name'/>");
+    genName.val(nameHtml);
+    $(name).replaceWith(genName);
+    genName.focus();
+	
+	var emailIdHtml = $(emailId).html(); 
+    var emailText = $("<input name='email' ng-model='vmApp.employeeEdit.Email'/>");
+    emailText.val(emailIdHtml);
+    $(emailId).replaceWith(emailText);
+    emailText.focus();
+	
+	var dobIdHtml = $(dobId).html(); 
+    var dobText = $("<input type='date' ng-model='vmApp.employeeEdit.DOB' />");
+    dobText.val(dobIdHtml);
+    $(dobId).replaceWith(dobText);
+    dobText.focus();
+	
+	var depIdHtml = $(depId).html(); 
+    var depText = $("<input name='department' type='text' class='input3' ng-model='vmApp.employeeEdit.Department' />");
+    depText.val(depIdHtml);
+    $(depId).replaceWith(depText);
+    depText.focus();
+	
+	var genIdHtml = $(genId).html(); 
+    var genText = $("<input ng-model='vmApp.employeeEdit.Age'/>");
+    genText.val(genIdHtml);
+    $(genId).replaceWith(genText);
+    genText.focus()
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+.btn {
+    border-style: groove;
+	border-radius: 07px;
+    color: white;
+    padding: 08px 18px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.success {background-color: #4CAF50;} /* Green */
+.input0 {
+ padding: 06px 18px;
+ border-style: groove;
+ border-radius: 07px;
+}
+.input1 {
+ padding: 06px 20px;
+border-style: groove;
+ border-radius: 07px;
+}
+.input2 {
+ padding: 06px 20px;
+ border-style: groove;
+ border-radius: 07px;
+}
+.input3 {
+ padding: 06px 20px;
+border-style: groove;
+ border-radius: 07px;
+}
+.input4 {
+ padding: 06px 20px;
+border-style: groove;
+ border-radius: 07px;
+}
+.input5 {
+ padding: 06px 20px;
+border-style: groove;
+ border-radius: 07px;
+}
+.mainCont{
+width : 91% !important;	
+}
